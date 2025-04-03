@@ -1,4 +1,3 @@
-import { useState, useEffect, useCallback } from "react";
 import {
   Paper,
   InputBase,
@@ -18,43 +17,41 @@ import {
   FilterList as FilterIcon,
 } from "@mui/icons-material";
 import debounce from "lodash.debounce";
+import { useCallback } from "react";
+import { useSearchParams } from "react-router";
 
-const SearchBar = ({ onSearch, onCategoryChange, onSortChange }) => {
+const SearchBar = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState("");
-  const [sort, setSort] = useState("");
+  const search = searchParams.get("search") || "";
+  const os = searchParams.get("os") || "";
+  const sort = searchParams.get("sort") || "";
 
-  const debouncedSearch = useCallback(
-    debounce((value) => {
-      onSearch(value);
-    }, 500),
-    [onSearch]
+  const setFilters = useCallback(
+    (value, filter) => {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+
+        if (value) newParams.set(filter, value);
+        else newParams.delete(filter);
+
+        return newParams;
+      });
+    },
+    [setSearchParams]
   );
 
-  useEffect(() => {
-    debouncedSearch(searchTerm);
+  const debouncedSearch = useCallback(
+    debounce((value) => setFilters(value, "search"), 500),
+    [setFilters]
+  );
+  const handleSearchChange = (e) => debouncedSearch(e.target.value);
 
-    return () => debouncedSearch.cancel();
-  }, [searchTerm, debouncedSearch]);
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleCategoryChange = (e) => {
-    const value = e.target.value;
-    setCategory(value);
-    onCategoryChange(value);
-  };
-
-  const handleSortChange = (e) => {
-    const value = e.target.value;
-    setSort(value);
-    onSortChange(value);
-  };
+  const handleOsChange = (e) => setFilters(e.target.value, "os");
+  const handleSortChange = (e) => setFilters(e.target.value, "sort");
 
   return (
     <Box sx={{ mb: 4 }}>
@@ -77,62 +74,45 @@ const SearchBar = ({ onSearch, onCategoryChange, onSortChange }) => {
             </IconButton>
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder="Search smartphones..."
-              value={searchTerm}
+              placeholder="Cerca smartphones..."
+              defaultValue={search}
               onChange={handleSearchChange}
             />
           </Paper>
 
           <Box sx={{ display: "flex", gap: 2 }}>
             <FormControl size="small" fullWidth>
-              <InputLabel id="category-label">Category</InputLabel>
+              <InputLabel id="os-label">Sistema Operativo</InputLabel>
               <Select
-                labelId="category-label"
-                value={category}
-                label="Category"
-                onChange={handleCategoryChange}
-                startAdornment={
-                  <FilterIcon
-                    fontSize="small"
-                    sx={{ mr: 1, color: "action.active" }}
-                  />
-                }
+                label="Sistema Operativo"
+                labelId="os-label"
+                value={os}
+                onChange={handleOsChange}
               >
-                <MenuItem value="">All Categories</MenuItem>
+                <MenuItem value="">Tutti</MenuItem>
                 <MenuItem value="iOS">iOS</MenuItem>
                 <MenuItem value="Android">Android</MenuItem>
               </Select>
             </FormControl>
 
-            <FormControl
-              size="small"
-              sx={{ borderRadius: theme.shape.borderRadius }}
-              fullWidth
-            >
-              <InputLabel id="sort-label">Sort By</InputLabel>
+            <FormControl size="small" fullWidth>
+              <InputLabel id="sort-label">Ordina Per</InputLabel>
               <Select
+                label="Ordina Per"
                 labelId="sort-label"
                 value={sort}
-                label="Sort By"
                 onChange={handleSortChange}
-                startAdornment={
-                  <SortIcon
-                    fontSize="small"
-                    sx={{ mr: 1, color: "action.active" }}
-                  />
-                }
               >
                 <MenuItem value="">Default</MenuItem>
-                <MenuItem value="name_asc">Name (A-Z)</MenuItem>
-                <MenuItem value="name_desc">Name (Z-A)</MenuItem>
-                <MenuItem value="price_asc">Price (Low to High)</MenuItem>
-                <MenuItem value="price_desc">Price (High to Low)</MenuItem>
+                <MenuItem value="title_asc">Nome (A-Z)</MenuItem>
+                <MenuItem value="title_desc">Nome (Z-A)</MenuItem>
+                <MenuItem value="price_asc">Prezzo (Meno costoso)</MenuItem>
+                <MenuItem value="price_desc">Prezzo (Piu costoso)</MenuItem>
               </Select>
             </FormControl>
           </Box>
         </>
       ) : (
-        // Desktop layout - inline
         <Paper
           elevation={0}
           sx={{
@@ -149,22 +129,22 @@ const SearchBar = ({ onSearch, onCategoryChange, onSortChange }) => {
           </IconButton>
           <InputBase
             sx={{ ml: 1, flex: 1 }}
-            placeholder="Search smartphones..."
-            value={searchTerm}
+            placeholder="Cerca smartphones..."
+            defaultValue={search}
             onChange={handleSearchChange}
           />
 
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
 
-          <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel id="category-label">Category</InputLabel>
+          <FormControl size="small" sx={{ m: 1, minWidth: 200 }}>
+            <InputLabel id="os-label">Sistema Operativo</InputLabel>
             <Select
-              labelId="category-label"
-              value={category}
-              label="Category"
-              onChange={handleCategoryChange}
+              label="Sistema Operativo"
+              labelId="os-label"
+              value={os}
+              onChange={handleOsChange}
             >
-              <MenuItem value="">All Categories</MenuItem>
+              <MenuItem value="">Tutto</MenuItem>
               <MenuItem value="iOS">iOS</MenuItem>
               <MenuItem value="Android">Android</MenuItem>
             </Select>
@@ -172,17 +152,17 @@ const SearchBar = ({ onSearch, onCategoryChange, onSortChange }) => {
 
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
 
-          <FormControl size="small" sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel id="sort-label">Sort By</InputLabel>
+          <FormControl size="small" sx={{ m: 1, minWidth: 150 }}>
+            <InputLabel id="sort-label">Ordina Per</InputLabel>
             <Select
+              label="Ordina Per"
               labelId="sort-label"
               value={sort}
-              label="Sort By"
               onChange={handleSortChange}
             >
               <MenuItem value="">Default</MenuItem>
-              <MenuItem value="name_asc">Nome (A-Z)</MenuItem>
-              <MenuItem value="name_desc">Nome (Z-A)</MenuItem>
+              <MenuItem value="title_asc">Nome (A-Z)</MenuItem>
+              <MenuItem value="title_desc">Nome (Z-A)</MenuItem>
               <MenuItem value="price_asc">Prezzo (Meno costoso)</MenuItem>
               <MenuItem value="price_desc">Prezzo (Piu costoso)</MenuItem>
             </Select>

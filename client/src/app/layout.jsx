@@ -6,7 +6,7 @@ export default function RootLayout() {
   return (
     <>
       <Navbar />
-      <Container sx={{ my: "2rem" }}>
+      <Container sx={{ pt: 10, pb: 4 }}>
         <Outlet />
       </Container>
     </>

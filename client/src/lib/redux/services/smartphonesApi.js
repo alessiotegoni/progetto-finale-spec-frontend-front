@@ -8,15 +8,20 @@ export const smartphonesApi = createApi({
   tagTypes: ["Smartphones"],
   endpoints: (builder) => ({
     getSmartphones: builder.query({
-      query: ({ title, category } = {}) => {
+      query: ({ search } = {}) => {
         const searchParams = new URLSearchParams();
-        if (title) searchParams.set("search", title);
-        if (category) searchParams.set("category", category);
+        if (search) searchParams.set("search", search);
+        // if (category) searchParams.set("category", category);
         return `/smartphones?${searchParams.toString()}`;
       },
+      providesTags: (result, error, arg) => [
+        { type: "Smartphones", id: "LIST" },
+        ...result.map(({ id }) => ({ type: "Smartphone", id })),
+      ],
     }),
     getSmartphoneById: builder.query({
       query: (id) => `/smartphones/${id}`,
+      providesTags: (result, error, id) => [{ type: "Smartphones", id }],
     }),
     createSmartphone: builder.mutation({
       query: (newPhone) => ({
@@ -24,6 +29,7 @@ export const smartphonesApi = createApi({
         method: "POST",
         body: newPhone,
       }),
+      invalidatesTags: [{ type: "Smartphones", id: "LIST" }],
     }),
     updateSmartphone: builder.mutation({
       query: ({ id, ...updatedPhone }) => ({
@@ -31,12 +37,17 @@ export const smartphonesApi = createApi({
         method: "PUT",
         body: updatedPhone,
       }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Smartphones", id: "LIST" },
+        { type: "Smartphones", id },
+      ],
     }),
     deleteSmartphone: builder.mutation({
       query: (id) => ({
         url: `/smartphones/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: [{ type: "Smartphones", id: "LIST" }],
     }),
   }),
 });

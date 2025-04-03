@@ -20,26 +20,30 @@ import {
   Favorite as FavoriteIcon,
   CompareArrows as CompareIcon,
   Menu as MenuIcon,
+  Add as AddIcon,
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router";
 import { useSelector } from "react-redux";
 
 const Navbar = () => {
+  const { pathname } = useLocation();
+
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const location = useLocation();
   const favorites = useSelector((state) => state.favorites.items);
 
   const navItems = [
     { text: "Home", path: "/", icon: <HomeIcon /> },
     {
-      text: "Favorites",
+      text: "Preferiti",
       path: "/favorites",
       icon: <FavoriteIcon />,
       badge: favorites.length,
     },
-    { text: "Comparison", path: "/comparison", icon: <CompareIcon /> },
+    { text: "Confronta", path: "/comparison", icon: <CompareIcon /> },
+    { text: "Crea smartphone", path: "/create", icon: <AddIcon /> },
   ];
 
   const toggleDrawer = (open) => (event) => {
@@ -52,7 +56,7 @@ const Navbar = () => {
     setDrawerOpen(open);
   };
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => pathname === path;
 
   const drawer = (
     <Box
@@ -69,14 +73,18 @@ const Navbar = () => {
             to={item.path}
             key={item.text}
             selected={isActive(item.path)}
-            sx={{
-              "&.Mui-selected": {
-                backgroundColor: theme.palette.primary.light + "30",
+            sx={
+              isActive(item.path) && {
+                backgroundColor: isActive(item.path)
+                  ? theme.palette.primary.light + "50"
+                  : "transparent",
                 "&:hover": {
-                  backgroundColor: theme.palette.primary.light + "40",
+                  backgroundColor: isActive(item.path)
+                    ? theme.palette.primary.light + "60"
+                    : theme.palette.action.hover,
                 },
-              },
-            }}
+              }
+            }
           >
             <ListItemIcon>
               {item.badge ? (

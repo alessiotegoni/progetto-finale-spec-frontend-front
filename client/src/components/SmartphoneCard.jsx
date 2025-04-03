@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography,
   CardActions,
   Button,
@@ -14,8 +13,9 @@ import {
   FavoriteBorder as FavoriteBorderIcon,
   CompareArrows as CompareIcon,
   Info as InfoIcon,
+  Smartphone as SmartphoneIcon,
 } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Link } from "react-router";
 import { useTheme } from "@mui/material/styles";
 import {
@@ -23,35 +23,52 @@ import {
   removeFavorite,
 } from "../lib/redux/slices/favoritesSlice";
 import { addToComparison } from "../lib/redux/slices/comparisonSlice";
+import { memo, useCallback } from "react";
 
-const SmartphoneCard = ({ smartphone }) => {
+function SmartphoneCard({ smartphone }) {
+  console.log("rendered smartphone", smartphone.title);
+
   const theme = useTheme();
   const dispatch = useDispatch();
-  const favorites = useSelector((state) => state.favorites.items);
-  const comparisonItems = useSelector((state) => state.comparison.items);
+  // const favorites = useSelector((state) => state.favorites.items);
+  // const comparisonItems = useSelector((state) => state.comparison.items);
 
-  const isFavorite = favorites.some((item) => item.id === smartphone.id);
-  const isInComparison = comparisonItems.some(
-    (item) => item.id === smartphone.id
+  const { isFavorite, isInComparison, isComparisonFull } = useSelector(
+    (state) => ({
+      isFavorite: state.favorites.items.some(
+        (item) => item.id === smartphone.id
+      ),
+      isInComparison: state.comparison.items.some(
+        (item) => item.id === smartphone.id
+      ),
+      isComparisonFull: state.comparison.items.length >= 2,
+    }),
+    shallowEqual
   );
-  const isComparisonFull = comparisonItems.length >= 2;
 
-  const handleToggleFavorite = () => {
-    const action = isFavorite
-      ? removeFavorite.bind(smartphone.id)
-      : addFavorite.bind(smartphone);
+  const handleToggleFavorite = useCallback(() => {
+    if (isFavorite) {
+      dispatch(removeFavorite(smartphone.id));
+    } else {
+      dispatch(addFavorite(smartphone));
+    }
+  }, [dispatch, isFavorite, smartphone]);
 
-    dispatch(action);
-  };
-
-  const handleAddToComparison = () => {
+  const handleAddToComparison = useCallback(() => {
     if (!isInComparison && !isComparisonFull) {
       dispatch(addToComparison(smartphone));
     }
-  };
+  }, [dispatch, isInComparison, isComparisonFull, smartphone]);
 
   return (
-    <Card sx={{ position: "relative" }}>
+    <Card
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+      }}
+    >
       <Box sx={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}>
         <IconButton
           onClick={handleToggleFavorite}
@@ -71,17 +88,22 @@ const SmartphoneCard = ({ smartphone }) => {
         </IconButton>
       </Box>
 
-      <CardMedia
-        component="img"
-        height="200"
-        image={smartphone.image}
-        alt={smartphone.name}
-        sx={{ objectFit: "contain", p: 2, backgroundColor: "#f5f5f5" }}
-      />
+      <Box
+        sx={{
+          p: 3,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#f5f5f5",
+          height: 150,
+        }}
+      >
+        <SmartphoneIcon sx={{ fontSize: 80, color: "text.secondary" }} />
+      </Box>
 
       <CardContent sx={{ flexGrow: 1 }}>
         <Typography gutterBottom variant="h6" component="div" noWrap>
-          {smartphone.name}
+          {smartphone.title}
         </Typography>
 
         <Box
@@ -93,15 +115,15 @@ const SmartphoneCard = ({ smartphone }) => {
           }}
         >
           <Chip
-            label={smartphone.category}
+            label={smartphone.os}
             size="small"
             sx={{
               backgroundColor:
-                smartphone.category === "iOS"
+                smartphone.os === "iOS"
                   ? theme.palette.primary.light + "30"
                   : theme.palette.secondary.light + "30",
               color:
-                smartphone.category === "iOS"
+                smartphone.os === "iOS"
                   ? theme.palette.primary.dark
                   : theme.palette.secondary.dark,
             }}
@@ -111,8 +133,11 @@ const SmartphoneCard = ({ smartphone }) => {
           </Typography>
         </Box>
 
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          {smartphone.brand} • {smartphone.displaySize}" Display
+        </Typography>
         <Typography variant="body2" color="text.secondary">
-          {smartphone.displaySize}
+          {smartphone.camera} • {smartphone.battery}
         </Typography>
       </CardContent>
 
@@ -137,11 +162,16 @@ const SmartphoneCard = ({ smartphone }) => {
           disabled={isComparisonFull && !isInComparison}
           sx={{ ml: "auto" }}
         >
-          Compara
+          Confronta
         </Button>
       </CardActions>
     </Card>
   );
-};
+}
 
-export default SmartphoneCard;
+export default memo(
+  SmartphoneCard,
+  (prevProps, nextProps) => prevProps.smartphone.id === nextProps.smartphone.id
+);
+
+// Decide quando i props sono uguali

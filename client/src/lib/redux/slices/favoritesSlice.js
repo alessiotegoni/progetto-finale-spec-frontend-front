@@ -3,13 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const loadFavorites = () => {
   try {
     const serializedFavorites = localStorage.getItem("favorites");
-    if (serializedFavorites === null) return { items: [] };
-
-    return JSON.parse(serializedFavorites);
+    if (serializedFavorites) return JSON.parse(serializedFavorites);
   } catch (err) {
     console.error("Error loading favorites from localStorage:", err);
-    return { items: [] };
   }
+  return { items: [] };
 };
 
 const initialState = loadFavorites();
