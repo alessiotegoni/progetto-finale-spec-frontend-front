@@ -1,4 +1,4 @@
-export type Smartphone = {
+export type Device = {
   title: string;
   category: string;
   brand: string;
