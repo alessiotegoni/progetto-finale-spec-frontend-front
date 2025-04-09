@@ -35,7 +35,7 @@ const SmartphoneForm = ({ smartphone, onSubmitSuccess, isLoading }) => {
   });
 
   const onSubmit = (data) => {
-    
+
     if (isSubmitSuccessful) return;
     onSubmitSuccess({
       ...data,
