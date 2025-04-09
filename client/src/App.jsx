@@ -4,8 +4,8 @@ import Home from "./app/routes/Home";
 import Details from "./app/routes/Details";
 import Favourites from "./app/routes/Favourites";
 import Comparison from "./app/routes/Comparison";
-import CreateSmartphone from "./app/routes/CreateSmartphone";
-import EditSmartphone from "./app/routes/EditSmartphone";
+import CreateDevice from "./app/routes/CreateDevice";
+import EditDevice from "./app/routes/EditDevice";
 
 export default function App() {
   return (
@@ -15,8 +15,8 @@ export default function App() {
         <Route path="/details/:id" element={<Details />} />
         <Route path="/favorites" element={<Favourites />} />
         <Route path="/comparison" element={<Comparison />} />
-        <Route path="/create" element={<CreateSmartphone />} />
-        <Route path="/edit/:id" element={<EditSmartphone />} />
+        <Route path="/create" element={<CreateDevice />} />
+        <Route path="/edit/:id" element={<EditDevice />} />
       </Route>
     </Routes>
   );

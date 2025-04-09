@@ -153,7 +153,7 @@ export default function ComparisonTable({ items }) {
                     color="text.secondary"
                     sx={{ fontStyle: "italic" }}
                   >
-                    Aggiungi un altro telefono per confrontare
+                    Aggiungi un altro dispositivo per confrontare
                   </Typography>
                 </TableCell>
               )}

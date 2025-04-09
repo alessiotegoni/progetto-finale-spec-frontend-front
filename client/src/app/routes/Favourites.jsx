@@ -1,7 +1,7 @@
 import { Grid, Typography, Box } from "@mui/material";
 import { useSelector } from "react-redux";
 import { Favorite as FavoriteIcon } from "@mui/icons-material";
-import SmartphoneCard from "../../components/SmartphoneCard";
+import SmartphoneCard from "../../components/DeviceCard";
 import EmptyState from "../../components/EmptyState";
 
 const Favorites = () => {
@@ -31,9 +31,9 @@ const Favorites = () => {
         ) : (
           <EmptyState
             title="Non hai ancora Preferiti"
-            description="Aggiungi i telefoni ai preferiti per vederli qui"
+            description="Aggiungi i dispositivi ai preferiti per vederli qui"
             icon={<FavoriteIcon sx={{ fontSize: 60 }} />}
-            actionText="Cerca Smartphones"
+            actionText="Cerca Dispositivi"
             actionLink="/"
           />
         )}

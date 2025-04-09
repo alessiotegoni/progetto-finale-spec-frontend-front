@@ -9,35 +9,35 @@ import {
 import { Link, useNavigate, useParams } from "react-router";
 import { Home as HomeIcon } from "@mui/icons-material";
 import {
-  useGetSmartphoneByIdQuery,
-  useUpdateSmartphoneMutation,
-} from "../../lib/redux/services/smartphonesApi";
-import SmartphoneForm from "../../components/SmartphoneForm";
+  useGetDeviceByIdQuery,
+  useUpdateDeviceMutation,
+} from "../../lib/redux/services/devicesApi";
+import DeviceForm from "../../components/DeviceForm";
 
-const EditSmartphone = () => {
+const EditDevice = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const {
-    data: smartphone,
-    isLoading: isLoadingSmartphone,
+    data: device,
+    isLoading: isLoadingDevice,
     isError: isErrorFetching,
-  } = useGetSmartphoneByIdQuery(id);
+  } = useGetDeviceByIdQuery(id);
   const [
-    updateSmartphone,
+    updateDevice,
     { isLoading: isUpdating, isError: isErrorUpdating, error },
-  ] = useUpdateSmartphoneMutation();
+  ] = useUpdateDeviceMutation();
 
   const handleSubmit = async (data) => {
     try {
-      await updateSmartphone({ id, ...data }).unwrap();
+      await updateDevice({ id, ...data }).unwrap();
       navigate(`/details/${id}`);
     } catch (err) {
-      console.error("Failed to update smartphone:", err);
+      console.error("Failed to update device:", err);
     }
   };
 
-  if (isLoadingSmartphone) {
+  if (isLoadingDevice) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
         <CircularProgress />
@@ -45,10 +45,10 @@ const EditSmartphone = () => {
     );
   }
 
-  if (isErrorFetching || !smartphone) {
+  if (isErrorFetching || !device) {
     return (
       <Alert severity="error" sx={{ mb: 4 }}>
-        Errore nel caricamento dei Dettagli dello smartphone. Perfavore prova
+        Errore nel caricamento dei Dettagli dello device. Perfavore prova
         piu tardi
       </Alert>
     );
@@ -72,7 +72,7 @@ const EditSmartphone = () => {
           size="small"
           color="inherit"
         >
-          {smartphone.title}
+          {device.title}
         </Button>
         <Typography color="text.primary">Modifica</Typography>
       </Breadcrumbs>
@@ -83,18 +83,18 @@ const EditSmartphone = () => {
         gutterBottom
         sx={{ fontWeight: "bold", mb: 4 }}
       >
-        Modifica Smartphone
+        Modifica Dispositivo
       </Typography>
 
       {isErrorUpdating && (
         <Alert severity="error" sx={{ mb: 3 }}>
-          Errore nell'aggiornamento dello smartphone:{" "}
+          Errore nell'aggiornamento dell dispositivo:{" "}
           {error?.data?.message || "Unknown error occurred"}
         </Alert>
       )}
 
-      <SmartphoneForm
-        smartphone={smartphone}
+      <DeviceForm
+        device={device}
         onSubmitSuccess={handleSubmit}
         isLoading={isUpdating}
       />
@@ -102,4 +102,4 @@ const EditSmartphone = () => {
   );
 };
 
-export default EditSmartphone;
+export default EditDevice;

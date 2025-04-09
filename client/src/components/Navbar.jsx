@@ -43,7 +43,7 @@ const Navbar = () => {
       badge: favorites.length,
     },
     { text: "Confronta", path: "/comparison", icon: <CompareIcon /> },
-    { text: "Crea smartphone", path: "/create", icon: <AddIcon /> },
+    { text: "Crea dispositivo", path: "/create", icon: <AddIcon /> },
   ];
 
   const toggleDrawer = (open) => (event) => {
@@ -119,7 +119,7 @@ const Navbar = () => {
                   fontWeight: 600,
                 }}
               >
-                PhoneCompare
+                DeviceCompare
               </Typography>
               <IconButton
                 color="inherit"
@@ -143,7 +143,7 @@ const Navbar = () => {
                   fontWeight: 600,
                 }}
               >
-                PhoneCompare
+                DeviceCompare
               </Typography>
               <Box sx={{ flexGrow: 1, display: "flex" }}>
                 {navItems.map((item) => (

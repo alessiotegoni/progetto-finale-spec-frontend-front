@@ -29,9 +29,9 @@ import {
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  useDeleteSmartphoneMutation,
-  useGetSmartphoneByIdQuery,
-} from "../../lib/redux/services/smartphonesApi";
+  useDeleteDeviceMutation,
+  useGetDeviceByIdQuery,
+} from "../../lib/redux/services/devicesApi";
 import {
   addFavorite,
   removeFavorite,
@@ -47,13 +47,9 @@ export default function Details() {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const {
-    data: smartphone,
-    isLoading,
-    isError,
-  } = useGetSmartphoneByIdQuery(id);
+  const { data: smartphone, isLoading, isError } = useGetDeviceByIdQuery(id);
   const [deleteSmartphone, { isLoading: isDeleting }] =
-    useDeleteSmartphoneMutation();
+    useDeleteDeviceMutation();
 
   const favorites = useSelector((state) => state.favorites.items);
   const comparisonItems = useSelector((state) => state.comparison.items);
@@ -158,7 +154,11 @@ export default function Details() {
                 }}
               >
                 <Box>
-                  <Chip label={smartphone.os} size="small" sx={{ mb: 1 }} />
+                  <Chip
+                    label={smartphone.category}
+                    size="small"
+                    sx={{ mb: 1 }}
+                  />
                   <Typography variant="h4" component="h1" gutterBottom>
                     {smartphone.title}
                   </Typography>

@@ -25,7 +25,7 @@ import {
 import { addToComparison } from "../lib/redux/slices/comparisonSlice";
 import { memo, useCallback } from "react";
 
-function SmartphoneCard({ smartphone }) {
+function DeviceCard({ smartphone }) {
   console.log("rendered smartphone", smartphone.title);
 
   const theme = useTheme();
@@ -115,15 +115,17 @@ function SmartphoneCard({ smartphone }) {
           }}
         >
           <Chip
-            label={smartphone.os}
+            label={smartphone.category}
             size="small"
             sx={{
               backgroundColor:
-                smartphone.os === "iOS"
+                smartphone.category === "smartphone"
                   ? theme.palette.primary.light + "30"
-                  : theme.palette.secondary.light + "30",
+                  : smartphone.category === "tablet"
+                  ? theme.palette.secondary.light + "30"
+                  : theme.palette.secondary.light + "200",
               color:
-                smartphone.os === "iOS"
+                smartphone.category === "smartphone"
                   ? theme.palette.primary.dark
                   : theme.palette.secondary.dark,
             }}
@@ -170,7 +172,7 @@ function SmartphoneCard({ smartphone }) {
 }
 
 export default memo(
-  SmartphoneCard,
+  DeviceCard,
   (prevProps, nextProps) => prevProps.smartphone.id === nextProps.smartphone.id
 );
 

@@ -1,31 +1,32 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Grid, Typography, Box, CircularProgress, Alert } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { useSearchParams } from "react-router";
-import { useGetSmartphonesQuery } from "../../lib/redux/services/smartphonesApi";
+import { useGetDevicesQuery } from "../../lib/redux/services/devicesApi";
 import EmptyState from "../../components/EmptyState";
 import SearchBar from "../../components/SearchBar";
-import SmartphoneCard from "../../components/SmartphoneCard";
+import DeviceCard from "../../components/DeviceCard";
 
 const Home = () => {
   const [searchParams] = useSearchParams();
 
   const search = searchParams.get("search") || "";
-  const os = searchParams.get("os") || "";
+  const category = searchParams.get("category") || "";
   const sort = searchParams.get("sort") || "";
 
   const {
     data: smartphones,
     isLoading,
     isError,
-  } = useGetSmartphonesQuery({ search, os, sort });
+  } = useGetDevicesQuery({ search, category });
 
-  const filteredSmartphones = React.useMemo(() => {
+  const filteredSmartphones = useMemo(() => {
     if (!smartphones) return [];
 
     let result = [...smartphones];
 
-    if (os) result = result.filter((phone) => phone.os === os);
+    if (category)
+      result = result.filter((phone) => phone.category === category);
 
     if (sort) {
       switch (sort) {
@@ -51,7 +52,7 @@ const Home = () => {
     }
 
     return result;
-  }, [smartphones, os, sort]);
+  }, [smartphones, category, sort]);
 
   return (
     <Box>
@@ -59,9 +60,9 @@ const Home = () => {
         variant="h4"
         component="h1"
         gutterBottom
-        sx={{ fontWeight: "bold", mb: 4 }}
+        sx={{ fontWeight: "bold", mb: 3 }}
       >
-        Esplora Smartphones
+        Esplora Devices
       </Typography>
 
       <SearchBar />
@@ -80,13 +81,13 @@ const Home = () => {
         <Grid container spacing={3}>
           {filteredSmartphones.map((smartphone) => (
             <Grid item xs={12} sm={6} md={4} key={smartphone.id}>
-              <SmartphoneCard smartphone={smartphone} />
+              <DeviceCard smartphone={smartphone} />
             </Grid>
           ))}
         </Grid>
       ) : (
         <EmptyState
-          title="Nessun telefono trovato"
+          title="Nessun dispositivo trovato"
           description="Prova a cambiare i criteri di ricerca"
           icon={<SearchIcon sx={{ fontSize: 60 }} />}
         />

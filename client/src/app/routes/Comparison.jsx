@@ -17,17 +17,17 @@ const Comparison = () => {
           gutterBottom
           sx={{ fontWeight: "bold", mb: 4 }}
         >
-          Confronta Smartphones
+          Confronta Dispositivi
         </Typography>
 
         {comparisonItems.length ? (
           <ComparisonTable items={comparisonItems} />
         ) : (
           <EmptyState
-            title="Nessuno smartphones da confrontare"
-            description="Aggiungi gli smartphone al confronto per vedere le loro specifiche affiancate."
+            title="Nessuno dispositivo da confrontare"
+            description="Aggiungi i dispositivi al confronto per vedere le loro specifiche affiancate."
             icon={<CompareIcon sx={{ fontSize: 60 }} />}
-            actionText="Cerca smartphone"
+            actionText="Cerca dispositivi"
             actionLink="/"
           />
         )}

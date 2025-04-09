@@ -11,14 +11,11 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import {
-  Search as SearchIcon,
-  Sort as SortIcon,
-  FilterList as FilterIcon,
-} from "@mui/icons-material";
+import { Search as SearchIcon } from "@mui/icons-material";
 import debounce from "lodash.debounce";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router";
+import SelectCategory from "./SelectCategory";
 
 const SearchBar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,7 +24,7 @@ const SearchBar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const search = searchParams.get("search") || "";
-  const os = searchParams.get("os") || "";
+  const category = searchParams.get("category") || "";
   const sort = searchParams.get("sort") || "";
 
   const setFilters = useCallback(
@@ -50,7 +47,7 @@ const SearchBar = () => {
   );
   const handleSearchChange = (e) => debouncedSearch(e.target.value);
 
-  const handleOsChange = (e) => setFilters(e.target.value, "os");
+  const handleCategoryChange = (e) => setFilters(e.target.value, "category");
   const handleSortChange = (e) => setFilters(e.target.value, "sort");
 
   return (
@@ -74,7 +71,7 @@ const SearchBar = () => {
             </IconButton>
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder="Cerca smartphones..."
+              placeholder="Cerca categorie..."
               defaultValue={search}
               onChange={handleSearchChange}
             />
@@ -82,17 +79,8 @@ const SearchBar = () => {
 
           <Box sx={{ display: "flex", gap: 2 }}>
             <FormControl size="small" fullWidth>
-              <InputLabel id="os-label">Sistema Operativo</InputLabel>
-              <Select
-                label="Sistema Operativo"
-                labelId="os-label"
-                value={os}
-                onChange={handleOsChange}
-              >
-                <MenuItem value="">Tutti</MenuItem>
-                <MenuItem value="iOS">iOS</MenuItem>
-                <MenuItem value="Android">Android</MenuItem>
-              </Select>
+              <InputLabel id="category-label">Categorie</InputLabel>
+              <SelectCategory value={category} onChange={handleCategoryChange} />
             </FormControl>
 
             <FormControl size="small" fullWidth>
@@ -129,7 +117,7 @@ const SearchBar = () => {
           </IconButton>
           <InputBase
             sx={{ ml: 1, flex: 1 }}
-            placeholder="Cerca smartphones..."
+            placeholder="Cerca categorie..."
             defaultValue={search}
             onChange={handleSearchChange}
           />
@@ -137,17 +125,8 @@ const SearchBar = () => {
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
 
           <FormControl size="small" sx={{ m: 1, minWidth: 200 }}>
-            <InputLabel id="os-label">Sistema Operativo</InputLabel>
-            <Select
-              label="Sistema Operativo"
-              labelId="os-label"
-              value={os}
-              onChange={handleOsChange}
-            >
-              <MenuItem value="">Tutto</MenuItem>
-              <MenuItem value="iOS">iOS</MenuItem>
-              <MenuItem value="Android">Android</MenuItem>
-            </Select>
+            <InputLabel id="category-label">Categorie</InputLabel>
+            <SelectCategory value={category} onChange={handleCategoryChange} />
           </FormControl>
 
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />

@@ -4,16 +4,19 @@ import {
   Button,
   Typography,
   Grid,
-  MenuItem,
   Paper,
   Divider,
   InputAdornment,
+  FormControl,
+  InputLabel,
+  FormHelperText,
 } from "@mui/material";
 import { Save as SaveIcon, Cancel as CancelIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router";
 import { useForm, Controller } from "react-hook-form";
+import SelectCategory from "./SelectCategory";
 
-const SmartphoneForm = ({ smartphone, onSubmitSuccess, isLoading }) => {
+export default function DeviceForm({ device, onSubmitSuccess, isLoading }) {
   const navigate = useNavigate();
 
   const {
@@ -22,20 +25,19 @@ const SmartphoneForm = ({ smartphone, onSubmitSuccess, isLoading }) => {
     formState: { errors, isSubmitSuccessful },
   } = useForm({
     defaultValues: {
-      title: smartphone?.title || "",
-      category: smartphone?.category || "Smartphone",
-      brand: smartphone?.brand || "",
-      os: smartphone?.os || "",
-      displaySize: smartphone?.displaySize?.toString() || "",
-      price: smartphone?.price?.toString() || "",
-      description: smartphone?.description || "",
-      camera: smartphone?.camera || "",
-      battery: smartphone?.battery || "",
+      title: device?.title || "",
+      category: device?.category || "smartphone",
+      brand: device?.brand || "",
+      os: device?.os || "",
+      displaySize: device?.displaySize?.toString() || "",
+      price: device?.price?.toString() || "",
+      description: device?.description || "",
+      camera: device?.camera || "",
+      battery: device?.battery || "",
     },
   });
 
   const onSubmit = (data) => {
-
     if (isSubmitSuccessful) return;
     onSubmitSuccess({
       ...data,
@@ -58,7 +60,7 @@ const SmartphoneForm = ({ smartphone, onSubmitSuccess, isLoading }) => {
       }}
     >
       <Typography variant="h5" fontWeight="bold" textAlign="center" mb={3}>
-        {smartphone ? "Modifica Smartphone" : "Crea Nuovo Smartphone"}
+        {device ? "Modifica Dispositivo" : "Crea Nuovo Dispositivo"}
       </Typography>
       <Divider sx={{ mb: 3 }} />
 
@@ -67,12 +69,6 @@ const SmartphoneForm = ({ smartphone, onSubmitSuccess, isLoading }) => {
           {[
             { name: "title", label: "Titolo", type: "text" },
             { name: "brand", label: "Marca", type: "text" },
-            {
-              name: "os",
-              label: "Sistema Operativo",
-              type: "select",
-              options: ["iOS", "Android", "Altro"],
-            },
             {
               name: "displaySize",
               label: "Dimensione Display",
@@ -90,53 +86,53 @@ const SmartphoneForm = ({ smartphone, onSubmitSuccess, isLoading }) => {
             },
             { name: "camera", label: "Fotocamera", type: "text" },
             { name: "battery", label: "Batteria", type: "text" },
-          ].map(({ name, label, type, options, adornment, ...props }) => (
+          ].map(({ name, label, type, adornment, ...props }) => (
             <Grid item xs={12} sm={6} key={name}>
               <Controller
                 name={name}
                 control={control}
                 rules={{ required: `${label} è obbligatorio` }}
-                render={({ field }) =>
-                  type === "select" ? (
-                    <TextField
-                      {...field}
-                      required
-                      select
-                      fullWidth
-                      sx={{ minWidth: 200 }}
-                      label={label}
-                      error={!!errors[name]}
-                      helperText={errors[name]?.message}
-                    >
-                      {options.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  ) : (
-                    <TextField
-                      {...field}
-                      required
-                      fullWidth
-                      label={label}
-                      type={type}
-                      error={!!errors[name]}
-                      helperText={errors[name]?.message}
-                      InputProps={{
-                        startAdornment: adornment ? (
-                          <InputAdornment position="start">
-                            {adornment}
-                          </InputAdornment>
-                        ) : null,
-                        inputProps: props,
-                      }}
-                    />
-                  )
-                }
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    required
+                    fullWidth
+                    label={label}
+                    type={type}
+                    error={!!errors[name]}
+                    helperText={errors[name]?.message}
+                    InputProps={{
+                      startAdornment: adornment ? (
+                        <InputAdornment position="start">
+                          {adornment}
+                        </InputAdornment>
+                      ) : null,
+                      inputProps: props,
+                    }}
+                  />
+                )}
               />
             </Grid>
           ))}
+
+          <Grid item xs={12} sm={6}>
+            <Controller
+              name="category"
+              control={control}
+              rules={{ required: "Categoria è obbligatoria" }}
+              render={({ field }) => (
+                <FormControl
+                  sx={{ minWidth: 200 }}
+                  required
+                  error={!!errors.category}
+                >
+                  <InputLabel id="category-label">Categorie</InputLabel>
+                  <SelectCategory {...field} showAll={false} />
+                  <FormHelperText>{errors.category?.message}</FormHelperText>
+                </FormControl>
+              )}
+            />
+          </Grid>
 
           <Grid item xs={12}>
             <Controller
@@ -206,6 +202,4 @@ const SmartphoneForm = ({ smartphone, onSubmitSuccess, isLoading }) => {
       </Box>
     </Paper>
   );
-};
-
-export default SmartphoneForm;
+}

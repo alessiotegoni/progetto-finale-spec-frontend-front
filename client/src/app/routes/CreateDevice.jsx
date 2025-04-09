@@ -1,18 +1,18 @@
 import { Box, Typography, Breadcrumbs, Button, Alert } from "@mui/material";
 import { Link, useNavigate } from "react-router";
 import { Home as HomeIcon } from "@mui/icons-material";
-import { useCreateSmartphoneMutation } from "../../lib/redux/services/smartphonesApi";
-import SmartphoneForm from "../../components/SmartphoneForm";
+import { useCreateDeviceMutation } from "../../lib/redux/services/devicesApi";
+import DeviceForm from "../../components/DeviceForm";
 
-export default function CreateSmartphone() {
+export default function CreateDevice() {
   const navigate = useNavigate();
 
-  const [createSmartphone, { isLoading, isError, error }] =
-    useCreateSmartphoneMutation();
+  const [createDevice, { isLoading, isError, error }] =
+    useCreateDeviceMutation();
 
   async function handleSubmit(data) {
     try {
-      await createSmartphone(data).unwrap();
+      await createDevice(data).unwrap();
       // unwrap lancia un errore se presente, se non presente ritorna i dati
       navigate("/");
     } catch (err) {
@@ -32,7 +32,7 @@ export default function CreateSmartphone() {
         >
           Home
         </Button>
-        <Typography color="text.primary">Crea Smartphone</Typography>
+        <Typography color="text.primary">Crea dispositivo</Typography>
       </Breadcrumbs>
 
       <Typography
@@ -41,7 +41,7 @@ export default function CreateSmartphone() {
         gutterBottom
         sx={{ fontWeight: "bold", mb: 4 }}
       >
-        Crea Nuovo Smartphone
+        Crea Nuovo Dispositivo
       </Typography>
 
       {isError && (
@@ -51,7 +51,7 @@ export default function CreateSmartphone() {
         </Alert>
       )}
 
-      <SmartphoneForm onSubmitSuccess={handleSubmit} isLoading={isLoading} />
+      <DeviceForm onSubmitSuccess={handleSubmit} isLoading={isLoading} />
     </Box>
   );
 }
